@@ -1,22 +1,18 @@
 // Main
 
-struct Game {
-    board: [Option<char>; 9],
-    current_turn: char,
-    player_x: String,
-    player_o: String,
-}
+use std::env;
 
-impl Game {
-    fn check_winner(self) -> Option<char> {
-        None
+mod client;
+pub mod game;
+mod server;
+
+#[tokio::main]
+async fn main() {
+    let args: Vec<String> = env::args().collect();
+
+    match args[1].as_str() {
+        "server" => server::start_server().await.unwrap(),
+        "client" => client::start_client().await.unwrap(),
+        _ => print!("Invaid arg"),
     }
-
-    fn make_move(mut self, player: char, position: usize) -> Result<(), String> {
-        Ok(())
-    }
-}
-
-fn main() {
-    println!("Hello, world!");
 }
