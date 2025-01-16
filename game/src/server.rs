@@ -41,8 +41,10 @@ impl ChannelManager {
 
         if let Some(senders) = channels.get_mut("GAME") {
             if senders.len() > 2 {
+                senders.clear();
                 return;
             }
+
             if senders.is_empty() {
                 game.player_x = user.to_string()
             } else {
@@ -105,6 +107,18 @@ async fn handle_connection(
                     if let Err(err) = game.make_move(player, place) {
                         channel_manager
                             .broadcast(Message::text(format!("{}", err)))
+                            .await;
+                    }
+
+                    if let Some(winner) = game.check_winner() {
+                        let winner_name = if winner == 'x' {
+                            game.player_x.clone()
+                        } else {
+                            game.player_o.clone()
+                        };
+
+                        channel_manager
+                            .broadcast(Message::text(format!("The winner is {}", winner_name)))
                             .await;
                     }
 

@@ -18,7 +18,7 @@ impl Game {
         }
     }
 
-    pub fn check_winner(self) -> Option<char> {
+    pub fn check_winner(&self) -> Option<char> {
         let mut x_indexes = Vec::new();
         let mut o_indexes = Vec::new();
 
@@ -63,12 +63,13 @@ impl Game {
             return Err("This is not your turn".to_string());
         }
 
-        self.current_turn = if player == 'x' { 'o' } else { 'x' };
         if self.board[position].is_none() {
             self.board[position] = Some(player);
         } else {
             return Err("Already marked".to_string());
         }
+
+        self.current_turn = if player == 'x' { 'o' } else { 'x' };
 
         Ok(())
     }
