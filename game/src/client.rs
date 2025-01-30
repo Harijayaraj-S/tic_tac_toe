@@ -55,11 +55,12 @@ pub async fn start_client() -> Result<()> {
 
     tx.send(Message::text(format!("START:{}", username)))
         .expect("Failed to send message");
-    println!("You created and joined the game");
+    println!("Joined the game");
+
+    tx.send(Message::text("ENTRY"))
+        .expect("Failed to send message");
 
     loop {
-        print!("{} > ", username);
-        io::stdout().flush()?;
         let mut message = String::new();
         io::stdin().read_line(&mut message)?;
         let message = message.trim();

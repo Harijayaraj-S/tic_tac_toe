@@ -31,6 +31,7 @@ impl Game {
             vec![2, 4, 6],
             vec![1, 4, 7],
             vec![2, 5, 8],
+            vec![0, 3, 6],
         ];
 
         for index in 0..self.board.len() {

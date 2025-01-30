@@ -59,9 +59,24 @@ impl ChannelManager {
         let mut channels = self.channels.lock().await;
         if let Some(senders) = channels.get_mut("GAME") {
             for sender in senders.iter() {
-                sender
-                    .send(message.clone())
-                    .expect("Failed to send message");
+                if senders.len() < 2 {
+                    sender
+                        .send(Message::text("Please wait for another player to join"))
+                        .expect("Failed to send message");
+                } else {
+                    sender
+                        .send(message.clone())
+                        .expect("Failed to send message");
+                }
+            }
+        }
+    }
+
+    async fn close(&self) {
+        let mut channels = self.channels.lock().await;
+        if let Some(senders) = channels.get_mut("GAME") {
+            for sender in senders.iter() {
+                sender.closed().await
             }
         }
     }
@@ -118,8 +133,13 @@ async fn handle_connection(
                         };
 
                         channel_manager
-                            .broadcast(Message::text(format!("The winner is {}", winner_name)))
+                            .broadcast(Message::text(format!(
+                                "The winner is {} \n The game is completed you can restart",
+                                winner_name
+                            )))
                             .await;
+
+                        channel_manager.close().await
                     }
 
                     channel_manager
@@ -129,6 +149,11 @@ async fn handle_connection(
                             parts[1],
                             game.print_board()
                         )))
+                        .await;
+                } else if text.starts_with("ENTRY") {
+                    let game = channel_manager.game.lock().await;
+                    channel_manager
+                        .broadcast(Message::text(game.print_board()))
                         .await;
                 }
             }

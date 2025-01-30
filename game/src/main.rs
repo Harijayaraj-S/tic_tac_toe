@@ -13,6 +13,6 @@ async fn main() {
     match args[1].as_str() {
         "server" => server::start_server().await.unwrap(),
         "client" => client::start_client().await.unwrap(),
-        _ => print!("Invaid arg"),
+        _ => print!("Invalid arg"),
     }
 }
